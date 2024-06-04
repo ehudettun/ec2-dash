@@ -1,11 +1,11 @@
-import NextAuth from "next-auth";
-import { NextApiHandler } from "next";
+import NextAuth, { AuthOptions } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 import CredentialsProvider from "next-auth/providers/credentials";
 const connectMongo = require("../../../../lib/mongodb");
 const User = require("../../../../models/User");
 const bcrypt = require("bcryptjs");
 
-const authOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -49,10 +49,13 @@ const authOptions = {
     signIn: "/auth/signin", // Pointing to the custom sign-in page
   },
   secret: process.env.NEXTAUTH_SECRET,
-
 };
 
-// Define the Next.js API route handler
-const handler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions);
+// Adapt NextAuth handler to use Next.js 13+ API route
+const handler = async (req: NextRequest) => {
+  // Convert NextRequest to the format that NextAuth expects
+  const nextAuthHandler = await NextAuth(req as any, NextResponse as any, authOptions);
+  return nextAuthHandler;
+};
 
 export { handler as GET, handler as POST };
