@@ -28,6 +28,9 @@ interface InstanceType {
 const fetchAndStoreEC2Instances = async () => {
   await connectMongo();
 
+  console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
+  console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
+
   for (const region of REGIONS) {
     const ec2Client = new EC2Client({
       region,
