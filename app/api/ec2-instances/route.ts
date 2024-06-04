@@ -64,7 +64,7 @@ const fetchAndStoreEC2Instances = async () => {
   }
 };
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
   const currentTime = Date.now();
 
   if (currentTime - lastUpdateTimestamp < 30000) {
@@ -90,6 +90,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.error('Error fetching instances from MongoDB:', error);
     return res.status(500).json({ error: 'Failed to fetch EC2 instances' });
   }
-};
-
-export default handler;
+}
