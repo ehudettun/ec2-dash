@@ -19,6 +19,7 @@ const SignIn: React.FC = () => {
     event.preventDefault();
     const result = await signIn('credentials', {
     callbackUrl: "/",
+    redirect: false,
       email,
       password,
     });
