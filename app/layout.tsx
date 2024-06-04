@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+// These styles apply to every route in the application
+import './globals.css';
 import ClientProvider from './providers/ClientProvider';
 
 const inter = Inter({ subsets: ["latin"] });

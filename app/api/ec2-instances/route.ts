@@ -4,11 +4,6 @@ import connectMongo from '../../../lib/mongodb';
 import Instance from '../../../models/Instance';
 
 export async function GET(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
     await connectMongo();
     const instances = await Instance.find().sort({ updatedAt: -1 }).limit(100); // Fetch the most recent 100 instances

@@ -28,7 +28,7 @@ interface Instance {
 
 const Dashboard: React.FC = () => {
   const { data: session, status } = useSession();
-  const loading = status === 'loading';
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Instance[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<keyof Instance>('name');
@@ -36,25 +36,23 @@ const Dashboard: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    if (!loading && !session) {
-      signIn();
-    }
-  }, [loading, session]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/ec2-instances');
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    if (session) {
+    if (status === 'authenticated') {
+      const fetchData = async () => {
+        try {
+          const response = await fetch('/api/ec2-instances');
+          const result = await response.json();
+          setData(result);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
       fetchData();
+    } else if (status === 'unauthenticated') {
+      setLoading(false);
     }
-  }, [session]);
+  }, [status]);
 
   const handleRequestSort = (property: keyof Instance) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -82,19 +80,33 @@ const Dashboard: React.FC = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="flex items-center justify-center h-screen">Loading...</p>;
   }
 
-  if (!session) {
-    return null;
+  if (status === 'unauthenticated') {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <Typography variant="h4" component="h1" gutterBottom className="text-center">
+          EC2 Status Dashboard
+        </Typography>
+        <Typography variant="h5" component="h2" gutterBottom className="text-center">
+          Ehud Ettun - HW assignment for cisco
+        </Typography>
+        <Button className="mt-4" onClick={() => signIn()}>
+          Sign in
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <Container>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container className="mt-10">
+      <Typography variant="h4" component="h1" gutterBottom className="text-center">
         Dashboard
       </Typography>
-      <Button onClick={() => signOut()}>Sign out</Button>
+      <Button className="mb-4" onClick={() => signOut()}>
+        Sign out
+      </Button>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
