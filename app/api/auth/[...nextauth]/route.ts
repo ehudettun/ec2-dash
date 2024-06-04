@@ -1,10 +1,11 @@
 import NextAuth from "next-auth";
+import { NextApiHandler } from "next";
 import CredentialsProvider from "next-auth/providers/credentials";
 const connectMongo = require("../../../../lib/mongodb");
 const User = require("../../../../models/User");
 const bcrypt = require("bcryptjs");
 
-export const authOptions = {
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -31,9 +32,9 @@ export const authOptions = {
         console.log('User found:', user);
 
         console.log('Comparing passwords...');
-        console.log('hash:'+user.password);
-        console.log('password:'+credentials.password);
-        const isPasswordValid = bcrypt.compare(credentials.password, user.password);
+        console.log('hash:' + user.password);
+        console.log('password:' + credentials.password);
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
         if (!isPasswordValid) {
           console.error('Invalid password. Provided:', credentials.password, 'Stored:', user.password);
           return null;
@@ -48,8 +49,10 @@ export const authOptions = {
     signIn: "/auth/signin", // Pointing to the custom sign-in page
   },
   secret: process.env.NEXTAUTH_SECRET,
+
 };
 
-const handler = NextAuth(authOptions);
+// Define the Next.js API route handler
+const handler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions);
 
 export { handler as GET, handler as POST };
