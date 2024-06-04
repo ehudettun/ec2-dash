@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
 import Instance from '../../../models/Instance';
 import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
@@ -64,7 +64,7 @@ const fetchAndStoreEC2Instances = async () => {
   }
 };
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest) {
   const currentTime = Date.now();
 
   if (currentTime - lastUpdateTimestamp < 30000) {
@@ -73,10 +73,10 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     try {
       await connectMongo();
       const instances = await Instance.find().sort({ updatedAt: -1 }).limit(100);
-      return res.status(200).json(instances);
+      return NextResponse.json(instances, { status: 200 });
     } catch (error) {
       console.error('Error fetching instances from MongoDB:', error);
-      return res.status(500).json({ error: 'Failed to fetch EC2 instances' });
+      return NextResponse.json({ error: 'Failed to fetch EC2 instances' }, { status: 500 });
     }
   }
 
@@ -85,9 +85,9 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
     await fetchAndStoreEC2Instances();
     const instances = await Instance.find().sort({ updatedAt: -1 }).limit(100);
-    return res.status(200).json(instances);
+    return NextResponse.json(instances, { status: 200 });
   } catch (error) {
     console.error('Error fetching instances from MongoDB:', error);
-    return res.status(500).json({ error: 'Failed to fetch EC2 instances' });
+    return NextResponse.json({ error: 'Failed to fetch EC2 instances' }, { status: 500 });
   }
 }
