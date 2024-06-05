@@ -39,7 +39,9 @@ const Dashboard: React.FC = () => {
     if (status === 'authenticated') {
       const fetchData = async () => {
         try {
-          const response = await fetch('/api/ec2-instances', { cache: 'no-store' });
+          const response = await fetch('/api/ec2-instances', { cache: 'no-store',  headers: {
+            'Cache-Control': 'no-store', // Ensure data is not cached
+          }, });
           const result = await response.json();
           setData(result);
         } catch (error) {
