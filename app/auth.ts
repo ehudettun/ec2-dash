@@ -50,5 +50,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         console.log('User authenticated successfully');
         return { id: user._id.toString(), email: user.email }; // Ensure id and email are returned
       },
+      
     }),],
-})
+    pages: {
+        signIn: "/login", // Custom login page path
+      },
+    
+});
