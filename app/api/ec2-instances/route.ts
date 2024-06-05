@@ -65,7 +65,7 @@ const fetchAndStoreEC2Instances = async () => {
 export async function GET(req: NextRequest) {
   const currentTime = Date.now();
 
-  if (currentTime - lastUpdateTimestamp < 30000) {
+  if (currentTime - lastUpdateTimestamp < 1000) {
     // Less than 30 seconds since the last update
     console.log('Returning cached data');
     try {
