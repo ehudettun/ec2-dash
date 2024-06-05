@@ -70,18 +70,12 @@ export async function GET(req: NextRequest) {
       await connectMongo();
       const instances = await Instance.find().sort({ updatedAt: -1 }).limit(100);
       const response = NextResponse.json(instances, { status: 200 });
-      response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      response.headers.set('Pragma', 'no-cache');
-      response.headers.set('Expires', '0');
-      response.headers.set('Surrogate-Control', 'no-store');
+      response.headers.set('Cache-Control', 'no-store');
       return response;
     } catch (error) {
       console.error('Error fetching instances from MongoDB:', error);
       const response = NextResponse.json({ error: 'Failed to fetch EC2 instances' }, { status: 500 });
-      response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      response.headers.set('Pragma', 'no-cache');
-      response.headers.set('Expires', '0');
-      response.headers.set('Surrogate-Control', 'no-store');
+      response.headers.set('Cache-Control', 'no-store');
       return response;
     }
   }
@@ -92,18 +86,16 @@ export async function GET(req: NextRequest) {
     await fetchAndStoreEC2Instances();
     const instances = await Instance.find().sort({ updatedAt: -1 }).limit(100);
     const response = NextResponse.json(instances, { status: 200 });
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
-    response.headers.set('Surrogate-Control', 'no-store');
+    response.headers.set('Cache-Control', 'no-store');
     return response;
   } catch (error) {
     console.error('Error fetching instances from MongoDB:', error);
     const response = NextResponse.json({ error: 'Failed to fetch EC2 instances' }, { status: 500 });
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
-    response.headers.set('Surrogate-Control', 'no-store');
+    response.headers.set('Cache-Control', 'no-store');
     return response;
   }
 }
+
+// Ensure the route is not cached
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
