@@ -4,7 +4,7 @@ import Instance from '../../../models/Instance';
 import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 
 const REGIONS = [
-  'us-east-1'
+  'us-east-1', 'us-east-2'
 ];
 
 let lastUpdateTimestamp = 0;
