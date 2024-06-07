@@ -1,3 +1,4 @@
+//This cron was a nice try, but we are moving to refresh with throttling within the api route 
 const cron = require('node-cron');
 require('dotenv').config(); // Load environment variables
 const { EC2Client, DescribeInstancesCommand } = require('@aws-sdk/client-ec2');
@@ -14,7 +15,7 @@ const REGIONS = [
 ];
 
 const fetchAndStoreEC2Instances = async () => {
-  console.log("MONGODBURI:"+process.env.MONGODB_URI)
+  //console.log("MONGODBURI:"+process.env.MONGODB_URI)
   try {
     await connectMongo();
 
